@@ -1,3 +1,4 @@
+import * as grpc from '@grpc/grpc-js';
 import { Injectable, Inject } from '@nestjs/common';
 import { DGRAPH_MODULE_OPTIONS } from './dgraph.constants';
 import { DgraphModuleOptions } from './interfaces/dgraph-options.interface';
@@ -18,10 +19,10 @@ export class DgraphService {
 
   createClient(options: DgraphModuleOptions) {
     if (!this._client) {
-      this._stubs = options.stubs.map(stub => {
+      this._stubs = options.stubs.map((stub) => {
         return new DgraphClientStub(
           stub.address,
-          stub.credentials,
+          stub.credentials as grpc.ChannelCredentials,
           stub.options,
         );
       });
@@ -35,7 +36,7 @@ export class DgraphService {
 
   close() {
     if (this._stubs) {
-      this._stubs.forEach(stub => {
+      this._stubs.forEach((stub) => {
         stub.close();
       });
       this._stubs = null;
